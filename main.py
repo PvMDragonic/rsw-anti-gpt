@@ -23,7 +23,8 @@ for page in all_pages:
     sleep(0.1)
 
     title = page.name
-    if any(title.startswith(ns + ':') for ns in skip_namespaces):
+    is_date_page = title[0].isnumeric() # Useless data, since those pages are kinda irrelevant.
+    if any(title.startswith(ns + ':') for ns in skip_namespaces) or is_date_page:
         continue
 
     try:
