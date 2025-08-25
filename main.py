@@ -47,7 +47,7 @@ for page in all_pages:
                 data[title] = { gemini.translate(title, en_text): pt_text }
 
                 with open(FILE, "w") as file_new:
-                    json.dump(data, file_new)
+                    json.dump(data, file_new, indent = 4)
 
                 print(title)
     except Exception as e:
