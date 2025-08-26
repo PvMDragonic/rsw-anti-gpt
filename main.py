@@ -2,7 +2,6 @@ from gemini import Gemini
 from time import sleep
 import mwclient
 import json
-import os
 
 FILE = 'data.json' 
 
@@ -15,16 +14,21 @@ skip_namespaces = ['Template', 'Module', 'User', 'Category', 'Talk', 'File', 'He
 
 all_pages = en_site.allpages(namespace = 0) # Main/content namespace
 
-if not os.path.exists(FILE):
-    with open(FILE, "w") as f:
-        json.dump({}, f)
+try:
+    with open(FILE, "r") as file:
+        data = json.load(file)
+except FileNotFoundError:
+    data = {}
 
 for page in all_pages:
     sleep(0.1)
 
     title = page.name
     is_date_page = title[0].isnumeric() # Useless data, since those pages are kinda irrelevant.
-    if any(title.startswith(ns + ':') for ns in skip_namespaces) or is_date_page:
+    non_article = any(title.startswith(ns + ':') for ns in skip_namespaces)
+    already_exists = title in data
+
+    if is_date_page or non_article or already_exists:
         continue
 
     try:
@@ -39,16 +43,11 @@ for page in all_pages:
         
         en_text = page.text()
         pt_text = pt_site.pages[pt_title].text()
+        data[title] = { gemini.translate(title, en_text): pt_text }
 
-        with open(FILE, "r") as file_old:
-            data = json.load(file_old)
+        with open(FILE, "w") as file_new:
+            json.dump(data, file_new, indent = 4)
 
-            if title not in data:
-                data[title] = { gemini.translate(title, en_text): pt_text }
-
-                with open(FILE, "w") as file_new:
-                    json.dump(data, file_new, indent = 4)
-
-                print(title)
+        print(title)
     except Exception as e:
         print(f"Error fetching {title}: {e}")
