@@ -17,7 +17,7 @@ class Gemini:
             return self.client.models.generate_content(
                 model = self.MODEL,
                 contents = f"""
-                    Traduz o código-fonte desse artigo da RuneScape Wiki pra Português:
+                    Traduza o código-fonte desse artigo da RuneScape Wiki pra Português, sem mais nada:
 
                     {text}
                 """
