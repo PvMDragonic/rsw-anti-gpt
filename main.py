@@ -41,13 +41,14 @@ for page in all_pages:
         if not pt_title:
             continue
         
-        en_text = page.text()
+        en_text = gemini.translate(title, page.text())
         pt_text = pt_site.pages[pt_title].text()
-        data[title] = { gemini.translate(title, en_text): pt_text }
 
-        with open(FILE, "w") as file_new:
-            json.dump(data, file_new, indent = 4)
-
-        print(title)
+        if en_text is not None:
+            data[title] = { en_text: pt_text }
+            with open(FILE, "w") as file_new:
+                json.dump(data, file_new, indent = 4)
+            print(title)
+            
     except Exception as e:
         print(f"Error fetching {title}: {e}")
