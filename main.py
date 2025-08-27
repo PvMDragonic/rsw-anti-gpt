@@ -24,11 +24,12 @@ for page in all_pages:
     sleep(0.1)
 
     title = page.name
-    is_date_page = title[0].isnumeric() # Useless data, since those pages are kinda irrelevant.
+    disamb_page = '(disambiguation)' in title
+    number_page = title[0].isnumeric() or title[-1].isnumeric() # Useless data, since those pages are kinda irrelevant.
     non_article = any(title.startswith(ns + ':') for ns in skip_namespaces)
     already_exists = title in data
 
-    if is_date_page or non_article or already_exists:
+    if disamb_page or number_page or non_article or already_exists:
         continue
 
     try:
